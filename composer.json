@@ -7,7 +7,7 @@
 	    "php": ">=5.3.6"
   },	  
   "autoload": {
-         "psr4" : {
+         "psr-4" : {
             "Webfan\\Support\\" : "src/Webfan/Support/"
          }
   },
