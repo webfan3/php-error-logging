@@ -10,5 +10,9 @@
          "psr4" : {
             "Webfan\\Support\\" : "src/Webfan/Support/"
          }
-  }  
+  },
+  "suggest" : {
+       "frdl/shutdown-helper" : "Reverse order register_shutdown manager.",
+       "webfan3/hps" : "Provides filesystem helpers"	  
+  }
 }
