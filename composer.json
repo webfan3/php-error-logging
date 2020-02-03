@@ -1,0 +1,14 @@
+{
+  "name" : "webfan3/php-error-logging",
+  "type" : "library",
+  "description": "ErrorHandling",	  
+  "license": ["MIT"],	  
+  "require" : {
+	    "php": ">=5.3.6"
+  },	  
+  "autoload": {
+         "psr4" : {
+            "Webfan\\Support\\" : "src/Webfan/Support/"
+         }
+  }  
+}
