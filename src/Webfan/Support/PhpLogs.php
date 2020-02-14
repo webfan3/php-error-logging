@@ -118,7 +118,9 @@ class PhpLogs
 
 
    foreach($this->error_handler_stack as $stack){
-	call_user_func_array($stack, [$num, $str, $file, $line, $context]);   
+	if(true===call_user_func_array($stack, [$num, $str, $file, $line, $context])){
+	  return true;	
+	}
    }
 	 
    return $this->log_exception( new \ErrorException( $str, $num, $severity, $file, $line ),  $severity, $context);
@@ -130,7 +132,9 @@ class PhpLogs
 	
 	 
      foreach($this->exception_handler_stack as $stack){
-	call_user_func_array($stack, [$e,  $severity, $context]);   
+	if(true===call_user_func_array($stack, [$e,  $severity, $context])){
+	  return true;	
+	}
      } 
 	 
 
