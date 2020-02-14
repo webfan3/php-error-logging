@@ -117,7 +117,9 @@ class PhpLogs
                 }
 
 
-
+   foreach($this->error_handler_stack as $stack){
+	call_user_func_array($stack, [$num, $str, $file, $line, $context]);   
+   }
    return $this->log_exception( new \ErrorException( $str, $num, $severity, $file, $line ),  $severity, $context);
  }
 
@@ -126,36 +128,35 @@ class PhpLogs
  {
 	
 	
-    if (!($severity >= $this->config['logs.log_level']) && strtolower(substr(\PHP_SAPI, 0, 3)) == 'cli') {
-          return false;
-    }
+	 
+     foreach($this->exception_handler_stack as $stack){
+	call_user_func_array($stack, [$e,  $severity, $context]);   
+     }
+	 
+	 
+  //  if (!($severity >= $this->config['logs.log_level']) && strtolower(substr(\PHP_SAPI, 0, 3)) == 'cli') {
+ //         return false;
+ //   }
 	
 	
-	
-
-
 	if(!file_exists($this->config['logs.dir'].$this->config['logs.file.errors'])){
 	  file_put_contents($this->config['logs.dir'].$this->config['logs.file.errors'], '');	
 	}
-	
- 
+	 
 	
 	  if(!($severity >= $this->config['logs.log_level']))return false;   
-  
-  
- 
+   
 
    if(is_object($e) && is_callable(array($e, 'getServerity') )) $severity = $e->getSeverity();
 
     $txt = $this->exceptionMessage($e); 
-
 
 	 
         if(is_callable($this->errorCallback)){
 	    call_user_func_array($this->errorCallback, [$e, $txt, $severity]);	
 	}
 	 
-        error_log($txt."\n", 3, $this->config['logs.dir'].$this->config['logs.file.errors']);  
+    error_log($txt."\n", 3, $this->config['logs.dir'].$this->config['logs.file.errors']);  
 	 
     if(!($severity >= $this->config['logs.error_level']) )return false;	 
   
@@ -227,8 +228,9 @@ class PhpLogs
       error_reporting($this->config['logs.error_reporting']);
 	 
 	 
-       $this->set_php_error_handler( [$this, "log_error"] );
-       set_exception_handler( [$this, "log_exception"] );	 
+       $this
+	       ->set_php_error_handler( [$this, "log_error"] )
+	       ->set_php_exception_handler([$this, "log_exception"]);
 	 
 	if(class_exists(\frdlweb\Thread\ShutdownTasks::class)){
 		$ShutdownTasks = \frdlweb\Thread\ShutdownTasks::getInstance();
@@ -265,6 +267,30 @@ public function restore_php_error_handler() {
     restore_error_handler();
   }  
  }
+
+	
+	
+public function set_php_exception_handler(callable $fn){
+   $previous =  $this->get_exception_handler();	
+   if(is_callable($previous) && !in_array($previous, $this->exception_handler_stack)){
+	   $this->exception_handler_stack[] = $previous;
+   }
+   set_exception_handler($fn);	
+   return $this;	
+}	
+	
+public function get_exception_handler() {
+  $exception_handler = set_exception_handler([$this, 'void_error_handler']);
+  restore_exception_handler();
+  return $exception_handler;
+}
+
+public function restore_php_exception_handler() {
+  while (set_exception_handler([$this, 'void_error_handler']) !== NULL) {
+    restore_exception_handler();
+    restore_exception_handler();
+  }  
+ }	
 	
 /*
 * https://www.php.net/manual/en/function.set-exception-handler.php#98201
