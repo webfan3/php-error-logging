@@ -274,7 +274,10 @@ class PhpLogs
 	
 
 public function set_php_error_handler(callable $fn){
-   $this->error_handler_stack[] = $this->get_error_handler();
+   $previous =  $this->get_error_handler();	
+   if(is_callable($previous)){
+	   $this->error_handler_stack[] = $previous;
+   }
    set_error_handler($fn);	
    return $this;	
 }
