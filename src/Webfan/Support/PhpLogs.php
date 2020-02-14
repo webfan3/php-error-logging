@@ -132,13 +132,7 @@ class PhpLogs
 	
 	
 	
-	   $ln = (is_object($e) && is_callable(array($e, 'getLine') ) && is_callable(array($e, 'getFile') ) && is_callable(array($e, 'getMessage') ) ) 
-	   ? $e->getMessage().' '.$e->getFile().' '.$e->getLine() 
-	   : $e;
-	
-		$datum = date('c', time());
-	
-	
+
 
 	if(!file_exists($this->config['logs.dir'].$this->config['logs.file.errors'])){
 	  file_put_contents($this->config['logs.dir'].$this->config['logs.file.errors'], '');	
@@ -148,50 +142,25 @@ class PhpLogs
 	
 	  if(!($severity >= $this->config['logs.log_level']))return false;   
   
-   $message =(is_object($e) && is_callable(array($e, 'getMessage') ))  ? $e->getMessage() : $e;
+  
  
 
    if(is_object($e) && is_callable(array($e, 'getServerity') )) $severity = $e->getSeverity();
 
+    $txt = $this->exceptionMessage($e); 
 
 
-
-   if(!($severity >= $this->config['logs.log_level']) )return false;   
- 
-
-	 error_log($datum." ".$ln."\n", 3, $this->config['logs.dir'].$this->config['logs.file.errors']);  
 	 
-	
-  if(!($severity >= $this->config['logs.error_level']) )return false;	 
-	 
-	 
-   $file    =(is_object($e) && is_callable(array($e, 'getFile') ))  ? $e->getFile() : $_SERVER['PHP_SELF'];
-   $file_scrambled = basename($file);
-   $file_scrambled = str_replace('.php', '', $file_scrambled);
-   $file_scrambled = str_pad($file_scrambled, mt_rand(3,8), '*', \STR_PAD_RIGHT);
-   $file_scrambled = str_pad($file_scrambled, mt_rand(3,8), '/*/', \STR_PAD_LEFT);
-   $file_scrambled = 'source:// '.$file_scrambled;
-   $line = (is_object($e) && is_callable(array($e, 'getLine') ))  ?  $e->getLine() : null;
- 
-   $txt = '';
-   $txt.= 'Es hat sich leider ein <b>Fehler</b> zugetragen!<br />';
-   $txt.= 'Fehlermeldung:';
-   $txt.= '<ul>';
-   $txt.='<li>'.$message.'</li>';
-   $txt.='<li>Quelle: '.$file_scrambled.'</li>';
-	
-	
-
-	if(true===$this->config['logs.debug'] && $severity >= $this->config['logs.log_level'])
-     {
-		 $txt.='<li style="font-size:9px;">Admininfo: Datei: '.$file.'</li>';
-     }	 
-    if(is_callable($this->errorCallback)){
+        if(is_callable($this->errorCallback)){
 	    call_user_func_array($this->errorCallback, [$e, $txt, $severity]);	
-		die();
-	}else{
-    	die($txt);
 	}
+	 
+        error_log($txt."\n", 3, $this->config['logs.dir'].$this->config['logs.file.errors']);  
+	 
+    if(!($severity >= $this->config['logs.error_level']) )return false;	 
+  
+   'cli' === strtolower(substr(\PHP_SAPI, 0, strlen('cli'))) && exit;
+   'cli' !== strtolower(substr(\PHP_SAPI, 0, strlen('cli'))) && die();	 
  }
 
 
@@ -275,7 +244,7 @@ class PhpLogs
 
 public function set_php_error_handler(callable $fn){
    $previous =  $this->get_error_handler();	
-   if(is_callable($previous)){
+   if(is_callable($previous) && !in_array($previous, $this->error_handler_stack)){
 	   $this->error_handler_stack[] = $previous;
    }
    set_error_handler($fn);	
@@ -296,5 +265,54 @@ public function restore_php_error_handler() {
     restore_error_handler();
   }  
  }
+	
+/*
+* https://www.php.net/manual/en/function.set-exception-handler.php#98201
+*/
+public function exceptionMessage(\Exception $exception) {
+    $datum = date('c', time());
+    // these are our templates
+    $traceline = "#%s %s(%s): %s(%s)";
+    $msg = $datum." PHP Fatal error:  Uncaught exception '%s' with message '%s' in %s:%s\nStack trace:\n%s\n  thrown in %s on line %s";
+
+    // alter your trace as you please, here
+    $trace = $exception->getTrace();
+    foreach ($trace as $key => $stackPoint) {
+        // I'm converting arguments to their type
+        // (prevents passwords from ever getting logged as anything other than 'string')
+        $trace[$key]['args'] = array_map('gettype', $trace[$key]['args']);
+    }
+
+    // build your tracelines
+    $result = array();
+    foreach ($trace as $key => $stackPoint) {
+        $result[] = sprintf(
+            $traceline,
+            $key,
+            $stackPoint['file'],
+            $stackPoint['line'],
+            $stackPoint['function'],
+            implode(', ', $stackPoint['args'])
+        );
+    }
+    // trace always ends with {main}
+    $result[] = '#' . ++$key . ' {main}';
+
+    // write tracelines into main template
+    $msg = sprintf(
+        $msg,
+        get_class($exception),
+        $exception->getMessage(),
+        $exception->getFile(),
+        $exception->getLine(),
+        implode("\n", $result),
+        $exception->getFile(),
+        $exception->getLine()
+    );
+
+    // log or echo as you please
+  //  error_log($msg);
+  return $msg;	
+}	
 	
 }
