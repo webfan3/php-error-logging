@@ -120,6 +120,7 @@ class PhpLogs
    foreach($this->error_handler_stack as $stack){
 	call_user_func_array($stack, [$num, $str, $file, $line, $context]);   
    }
+	 
    return $this->log_exception( new \ErrorException( $str, $num, $severity, $file, $line ),  $severity, $context);
  }
 
@@ -127,38 +128,28 @@ class PhpLogs
  public function log_exception(  $e,  $severity = 0, $context = null)
  {
 	
-	
 	 
      foreach($this->exception_handler_stack as $stack){
 	call_user_func_array($stack, [$e,  $severity, $context]);   
-     }
+     } 
 	 
-	 
-  //  if (!($severity >= $this->config['logs.log_level']) && strtolower(substr(\PHP_SAPI, 0, 3)) == 'cli') {
- //         return false;
- //   }
-	
-	
+
 	if(!file_exists($this->config['logs.dir'].$this->config['logs.file.errors'])){
 	  file_put_contents($this->config['logs.dir'].$this->config['logs.file.errors'], '');	
 	}
 	 
-	
-	  if(!($severity >= $this->config['logs.log_level']))return false;   
-   
 
    if(is_object($e) && is_callable(array($e, 'getServerity') )) $severity = $e->getSeverity();
 
     $txt = $this->exceptionMessage($e); 
-
 	 
-        if(is_callable($this->errorCallback)){
-	    call_user_func_array($this->errorCallback, [$e, $txt, $severity]);	
-	}
+    error_log($txt."\n", 3, $this->config['logs.dir'].$this->config['logs.file.errors']); 
 	 
-    error_log($txt."\n", 3, $this->config['logs.dir'].$this->config['logs.file.errors']);  
+     if(is_callable($this->errorCallback)){
+	call_user_func_array($this->errorCallback, [$e, $txt, $severity]);	
+     }	
 	 
-    if(!($severity >= $this->config['logs.error_level']) )return false;	 
+    if(!($severity >= $this->config['logs.error_level']) )return true;	 
   
    'cli' === strtolower(substr(\PHP_SAPI, 0, strlen('cli'))) && exit;
    'cli' !== strtolower(substr(\PHP_SAPI, 0, strlen('cli'))) && die();	 
