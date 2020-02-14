@@ -9,6 +9,9 @@ class PhpLogs
 	
   protected $config = [];
   protected $errorCallback = null;	
+  protected $error_handler_stack = [];	
+  protected $exception_handler_stack = [];	
+	
 	
   public function __construct(array $config = null, $register = true, callable $errorCallback = null){
 	  $this->errorCallback = $errorCallback;
@@ -251,16 +254,16 @@ class PhpLogs
 	
  public function register(){	
 
-	 ini_set('display_errors', $this->config['logs.display_errors']);
-     error_reporting($this->config['logs.error_reporting']);
+      ini_set('display_errors', $this->config['logs.display_errors']);
+      error_reporting($this->config['logs.error_reporting']);
 	 
 	 
-       set_error_handler( [$this, "log_error"] );
+       $this->set_php_error_handler( [$this, "log_error"] );
        set_exception_handler( [$this, "log_exception"] );	 
 	 
 	if(class_exists(\frdlweb\Thread\ShutdownTasks::class)){
 		$ShutdownTasks = \frdlweb\Thread\ShutdownTasks::getInstance();
-        $ShutdownTasks([$this, 'shutdown_functions']);		
+                $ShutdownTasks([$this, 'shutdown_functions']);		
 	}else{
 		register_shutdown_function([$this, 'shutdown_functions']);		
 	}	  	 
@@ -268,4 +271,27 @@ class PhpLogs
 	 
    return $this;
  }
+	
+
+public function set_php_error_handler(callable $fn){
+   $this->error_handler_stack[] = $this->get_error_handler();
+   set_error_handler($fn);	
+   return $this;	
+}
+	
+public function void_error_handler() {}
+
+public function get_error_handler() {
+  $error_handler = set_error_handler([$this, 'void_error_handler']);
+  restore_error_handler();
+  return $error_handler;
+}
+
+public function restore_php_error_handler() {
+  while (set_error_handler([$this, 'void_error_handler']) !== NULL) {
+    restore_error_handler();
+    restore_error_handler();
+  }  
+ }
+	
 }
