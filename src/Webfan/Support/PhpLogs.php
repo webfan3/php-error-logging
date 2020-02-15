@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace Webfan\Support;
 
+use Webfan\Support\LoggingHandlerInterface;
 use Psr\Log\LoggerInterface;
 
 
