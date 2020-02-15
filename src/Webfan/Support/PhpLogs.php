@@ -158,16 +158,19 @@ class PhpLogs implements LoggerInterface, LoggingHandlerInterface
 
     $txt = $this->exceptionMessage($e); 
 	 
-    error_log($txt."\n", 3, $this->config['logs.dir'].$this->config['logs.file.errors']); 
-	 
      if(is_callable($this->errorCallback)){
 	call_user_func_array($this->errorCallback, [$e, $txt, $severity]);	
      }	
 	 
     if(!($severity >= $this->config['logs.error_level']) )return true;	 
+	 
+    error_log($txt."\n", 3, $this->config['logs.dir'].$this->config['logs.file.errors']); 
   
-   'cli' === strtolower(substr(\PHP_SAPI, 0, strlen('cli'))) && exit;
-   'cli' !== strtolower(substr(\PHP_SAPI, 0, strlen('cli'))) && die();	 
+   if($this->config['logs.display_errors'] || strtolower($this->config['logs.display_errors'])==='on'){
+	print $xt;   
+   }
+   $severity >= 2 && 'cli' === strtolower(substr(\PHP_SAPI, 0, strlen('cli'))) && exit;
+   $severity >= 2 && 'cli' !== strtolower(substr(\PHP_SAPI, 0, strlen('cli'))) && die();	 
  }
 
 
