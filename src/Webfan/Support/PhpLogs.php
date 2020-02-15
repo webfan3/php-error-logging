@@ -254,6 +254,11 @@ class PhpLogs implements LoggerInterface
    return $this;
  }
 	
+	
+	
+public function prepend_error_handler(callable $fn){
+   array_unshift($this->error_handler_stack, $fn);
+}	
 public function set_error_handler(callable $fn){
    return call_user_func_array([$this, 'set_php_error_handler'], func_get_args());	
 }
@@ -281,7 +286,9 @@ public function restore_php_error_handler() {
   }  
  }
 
-	
+public function prepend_exception_handler(callable $fn){
+   array_unshift($this->exception_handler_stack, $fn);
+}		
 public function set_exception_handler(callable $fn){
    return call_user_func_array([$this, 'set_php_exception_handler'], func_get_args());	
 }	
