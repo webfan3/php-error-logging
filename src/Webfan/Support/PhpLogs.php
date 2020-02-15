@@ -239,7 +239,7 @@ class PhpLogs implements LoggerInterface, LoggingHandlerInterface
       $this->registered = true;
 	 
 	 
-      ini_set('display_errors', $this->config['logs.display_errors']);
+      ini_set('display_errors', (string)$this->config['logs.display_errors']);
       error_reporting($this->config['logs.error_reporting']);
 	 
 	 
@@ -325,7 +325,7 @@ public function exceptionMessage(\Exception $exception) {
     $datum = date('c', time());
     // these are our templates
     $traceline = "#%s %s(%s): %s(%s)";
-    $msg = getmypid()." ".$datum." PHP Fatal error:  Uncaught exception '%s' with message '%s' in %s:%s\nStack trace:\n%s\n  thrown in %s on line %s";
+    $msg = "(%s) %s %s: '%s' in %s:%s\nStack trace:\n%s\n thrown in %s on line %s";
 
     // alter your trace as you please, here
     $trace = $exception->getTrace();
@@ -353,6 +353,8 @@ public function exceptionMessage(\Exception $exception) {
     // write tracelines into main template
     $msg = sprintf(
         $msg,
+	getmypid(),    
+	$datum,    
         get_class($exception),
         $exception->getMessage(),
         $exception->getFile(),
@@ -368,49 +370,7 @@ public function exceptionMessage(\Exception $exception) {
 }	
 	
 	
-	
-	
-/**
-    public function emergency($message, array $context = array()){
-	$this->log_exception( new \Exception( $message, 0, \E_USER_ERROR ),  \E_USER_ERROR, $context);    
-    }
-
-
-    public function alert($message, array $context = array()){
-	$this->log_exception( new \Exception( $message, 0, self::E_RECOVERABLE_ERROR ), self::E_RECOVERABLE_ERROR, $context);    
-    }
-
-
-    public function critical($message, array $context = array()){
-	$this->log_exception( new \Exception( $message, 0, \E_USER_ERROR ), \E_USER_ERROR, $context);    
-    }
-
-    public function error($message, array $context = array()){
-	$this->log_exception( new \Exception( $message, 0, \E_USER_WARNING ), \E_USER_WARNING, $context);    
-    }
-
-
-    public function warning($message, array $context = array()){
-	$this->log_exception( new \Exception( $message, 0, \E_USER_WARNING ), \E_USER_WARNING, $context);    
-    }
-
-
-    public function notice($message, array $context = array()){
-	$this->log_exception( new \Exception( $message, 0, \E_NOTICE ), \E_NOTICE, $context);    
-    }
-
-
-    public function info($message, array $context = array()){
-	$this->log_exception( new \Exception( $message, 0, 0 ), 0, $context);    
-    }
-
- 
-    public function debug($message, array $context = array()){
-	$this->log_exception( new \Exception( $message, 0, 0 ), 0, $context);    
-    }
-
-*/
-    public function log($level, $message, array $context = array()){
+  public function log($level, $message, array $context = array()){
 	$this->log_exception( new \Exception( $message, 0, $level ), $level, $context);    
-    }
+  }
 }
