@@ -16,11 +16,14 @@ class PhpLogs implements LoggerInterface
   protected $config = [];
   protected $errorCallback = null;	
   protected $error_handler_stack = [];	
-  protected $exception_handler_stack = [];	
+  protected $exception_handler_stack = [];
+  protected $registered	= false;
+	
 	
 	
   public function __construct(array $config = null, $register = true, callable $errorCallback = null){
 	  $this->errorCallback = $errorCallback;
+	  $this->registered = false;
 	  
 	  if(null===$config){
 		$config = [];  
@@ -225,7 +228,13 @@ class PhpLogs implements LoggerInterface
  }	
 	
  public function register(){	
-
+     if(true===$this->registered){
+	  return $this;    
+     }
+	 
+      $this->registered = true;
+	 
+	 
       ini_set('display_errors', $this->config['logs.display_errors']);
       error_reporting($this->config['logs.error_reporting']);
 	 
