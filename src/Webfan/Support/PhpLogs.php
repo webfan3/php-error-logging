@@ -8,6 +8,8 @@ use Psr\Log\LoggerInterface;
 
 class PhpLogs implements LoggerInterface
 {
+   use \Psr\Log\LoggerTrait;	
+	
 	
   const E_RECOVERABLE_ERROR = 1;	
 	
@@ -243,7 +245,9 @@ class PhpLogs implements LoggerInterface
    return $this;
  }
 	
-
+public function set_error_handler(callable $fn){
+   return call_user_func_array([$this, 'set_php_error_handler'], func_get_args());	
+}
 public function set_php_error_handler(callable $fn){
    $previous =  $this->get_error_handler();	
    if(is_callable($previous) && !in_array($previous, $this->error_handler_stack)){
@@ -269,7 +273,9 @@ public function restore_php_error_handler() {
  }
 
 	
-	
+public function set_exception_handler(callable $fn){
+   return call_user_func_array([$this, 'set_php_exception_handler'], func_get_args());	
+}	
 public function set_php_exception_handler(callable $fn){
    $previous =  $this->get_exception_handler();	
    if(is_callable($previous) && !in_array($previous, $this->exception_handler_stack)){
@@ -344,124 +350,46 @@ public function exceptionMessage(\Exception $exception) {
 	
 	
 	
-	 /**
-     * System is unusable.
-     *
-     * @param string $message
-     * @param array  $context
-     *
-     * @return void
-     */
+/**
     public function emergency($message, array $context = array()){
 	$this->log_exception( new \Exception( $message, 0, \E_USER_ERROR ),  \E_USER_ERROR, $context);    
     }
 
-    /**
-     * Action must be taken immediately.
-     *
-     * Example: Entire website down, database unavailable, etc. This should
-     * trigger the SMS alerts and wake you up.
-     *
-     * @param string $message
-     * @param array  $context
-     *
-     * @return void
-     */
+
     public function alert($message, array $context = array()){
 	$this->log_exception( new \Exception( $message, 0, self::E_RECOVERABLE_ERROR ), self::E_RECOVERABLE_ERROR, $context);    
     }
 
-    /**
-     * Critical conditions.
-     *
-     * Example: Application component unavailable, unexpected exception.
-     *
-     * @param string $message
-     * @param array  $context
-     *
-     * @return void
-     */
+
     public function critical($message, array $context = array()){
 	$this->log_exception( new \Exception( $message, 0, \E_USER_ERROR ), \E_USER_ERROR, $context);    
     }
 
-    /**
-     * Runtime errors that do not require immediate action but should typically
-     * be logged and monitored.
-     *
-     * @param string $message
-     * @param array  $context
-     *
-     * @return void
-     */
     public function error($message, array $context = array()){
 	$this->log_exception( new \Exception( $message, 0, \E_USER_WARNING ), \E_USER_WARNING, $context);    
     }
 
-    /**
-     * Exceptional occurrences that are not errors.
-     *
-     * Example: Use of deprecated APIs, poor use of an API, undesirable things
-     * that are not necessarily wrong.
-     *
-     * @param string $message
-     * @param array  $context
-     *
-     * @return void
-     */
+
     public function warning($message, array $context = array()){
 	$this->log_exception( new \Exception( $message, 0, \E_USER_WARNING ), \E_USER_WARNING, $context);    
     }
 
-    /**
-     * Normal but significant events.
-     *
-     * @param string $message
-     * @param array  $context
-     *
-     * @return void
-     */
+
     public function notice($message, array $context = array()){
 	$this->log_exception( new \Exception( $message, 0, \E_NOTICE ), \E_NOTICE, $context);    
     }
 
-    /**
-     * Interesting events.
-     *
-     * Example: User logs in, SQL logs.
-     *
-     * @param string $message
-     * @param array  $context
-     *
-     * @return void
-     */
+
     public function info($message, array $context = array()){
 	$this->log_exception( new \Exception( $message, 0, 0 ), 0, $context);    
     }
 
-    /**
-     * Detailed debug information.
-     *
-     * @param string $message
-     * @param array  $context
-     *
-     * @return void
-     */
+ 
     public function debug($message, array $context = array()){
 	$this->log_exception( new \Exception( $message, 0, 0 ), 0, $context);    
     }
 
-    /**
-     * Logs with an arbitrary level.
-     *
-     * @param mixed  $level
-     * @param string $message
-     * @param array  $context
-     *
-     * @return void
-     *
-     * @throws \Psr\Log\InvalidArgumentException
-     */
+*/
     public function log($level, $message, array $context = array()){
 	$this->log_exception( new \Exception( $message, 0, $level ), $level, $context);    
     }
