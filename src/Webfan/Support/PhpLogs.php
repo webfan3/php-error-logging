@@ -6,7 +6,7 @@ namespace Webfan\Support;
 use Psr\Log\LoggerInterface;
 
 
-class PhpLogs implements LoggerInterface
+class PhpLogs implements LoggerInterface, LoggingHandlerInterface
 {
    use \Psr\Log\LoggerTrait;	
 	
