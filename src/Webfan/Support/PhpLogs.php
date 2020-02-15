@@ -294,7 +294,7 @@ public function exceptionMessage(\Exception $exception) {
     $datum = date('c', time());
     // these are our templates
     $traceline = "#%s %s(%s): %s(%s)";
-    $msg = $datum." PHP Fatal error:  Uncaught exception '%s' with message '%s' in %s:%s\nStack trace:\n%s\n  thrown in %s on line %s";
+    $msg = getmypid()." ".$datum." PHP Fatal error:  Uncaught exception '%s' with message '%s' in %s:%s\nStack trace:\n%s\n  thrown in %s on line %s";
 
     // alter your trace as you please, here
     $trace = $exception->getTrace();
