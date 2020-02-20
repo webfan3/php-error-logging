@@ -68,9 +68,9 @@ class PhpLogs implements LoggerInterface, LoggingHandlerInterface
         $size /= $mod;
     }
 
-    $endIndex = strpos($size, ".")+3;
+    $endIndex = strpos((string)$size, ".")+3;
 
-    return substr( $size, 0, $endIndex).' '.$units[$i];
+    return substr( (string)$size, 0, $endIndex).' '.$units[$i];
  }
 	
  public function pune(){
