@@ -127,7 +127,15 @@ class PhpLogs implements LoggerInterface, LoggingHandlerInterface
                      break;
                 }
 
-
+	
+ if(!($severity >= $this->config['logs.error_level']) )return true;	
+	 
+ if($this->config['logs.display_errors']!=1 && strtolower($this->config['logs.display_errors'])!='on'
+	 
+	 ){
+	return true;
+   }	 
+	 
    foreach($this->error_handler_stack as $stack){
 	if(true===call_user_func_array($stack, [$num, $str, $file, $line, $context])){
 	  return true;	
