@@ -43,7 +43,7 @@ class PhpLogs implements LoggerInterface, LoggingHandlerInterface
 		         'logs.error_level' => \E_USER_ERROR,
 		         'logs.log_level' => self::E_RECOVERABLE_ERROR,
 		         'logs.error_reporting' => \E_ALL,
-		         'logs.display_errors' => 0,
+		         'logs.display_errors' => '0',
 		  ]), $config);
 	  
 	  if(!is_dir($this->config['logs.dir'])){
@@ -130,7 +130,7 @@ class PhpLogs implements LoggerInterface, LoggingHandlerInterface
 	
  if(!($severity >= $this->config['logs.error_level']) )return true;	
 	 
- if($this->config['logs.display_errors']!=1 && strtolower($this->config['logs.display_errors'])!='on'
+ if($this->config['logs.display_errors']!=1 && strtolower((string)$this->config['logs.display_errors'])!='on'
 	 
 	 ){
 	return true;
