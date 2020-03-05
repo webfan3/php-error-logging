@@ -164,7 +164,7 @@ class PhpLogs implements LoggerInterface, LoggingHandlerInterface
 
    if(is_object($e) && is_callable(array($e, 'getServerity') )) $severity = $e->getSeverity();
 
-    $txt = $this->exceptionMessage($e); 
+    $txt =(is_object($e) && $e instanceof \Exception) ? $this->exceptionMessage($e) : (string)$e; 
 	 
      if(is_callable($this->errorCallback)){
 	call_user_func_array($this->errorCallback, [$e, $txt, $severity]);	
@@ -174,7 +174,7 @@ class PhpLogs implements LoggerInterface, LoggingHandlerInterface
 	 
     error_log($txt."\n", 3, $this->config['logs.dir'].$this->config['logs.file.errors']); 
   
-   if($this->config['logs.display_errors'] || strtolower($this->config['logs.display_errors'])==='on'){
+   if($this->config['logs.display_errors'] || strtolower((string)$this->config['logs.display_errors'])==='on'){
 	print $xt;   
    }
    $severity >= 2 && 'cli' === strtolower(substr(\PHP_SAPI, 0, strlen('cli'))) && exit;
