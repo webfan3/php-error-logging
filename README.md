@@ -7,7 +7,12 @@ ErrorHandling
 $ composer install webfan3/php-error-logging
 ````
 
-## Usage
+# Usage
+You can use the dependent libraries (standalone) or configure the [`frdlweb Container`](https://github.com/webfan3/php-error-logging/blob/master/config/logging.php)
+
+#### deprecated Usage
+\Webfan\Support\PhpLogs old class
+
 ````php
 new \Webfan\Support\PhpLogs([
 		         'logs.debug' => false, 
