@@ -25,17 +25,20 @@ return [
          return $Pretty;
      },	  
           
-	'state.emitter' => decorate(function($emitter, ContainerInterface $c){
+
+'state.emitter' => decorate(function($emitter, ContainerInterface $c){
 	   
      $emitter->once('bootstrap', static function($eventName, $emitter, $Event) use($c){
-			  $logger = $Event->getArgument('container')->get('logger.project-shield.php');
+			 
+	     $logger = $Event->getArgument('container')->get('logger.project-shield.php');
         
-        $logger >register(); 
-        
-		 });
      
-		return $emitter;
-	}),
+	     $logger >register();  
+     });
+     
+	
+		return $emitter;	
+}),
 	
   
   
