@@ -1,11 +1,19 @@
 {
   "name" : "webfan3/php-error-logging",
-  "type" : "library",
-  "description": "ErrorHandling",	  
-  "license": ["MIT"],	  
+  "type" : "frdl-extension",
+  "description": "ErrorHandling,logging,whoops-implemntation",	  
+  "license": ["MIT"],	
+  "repositories": [
+        {
+            "type": "composer",
+            "url": "https:\/\/packages.frdl.de"
+        }
+  ],	
   "require" : {
-	    "php": ">=5.3.6",
-	    "psr/log" : "~1.1.2"
+	    "php": ">=5.3.6",	    
+	    "frdl/frdlweb-composer-installers" : "*",
+	    "psr/log" : "~1.1.2",
+	    "filp/whoops : "~2.7.3",
   },	  
   "autoload": {
          "psr-4" : {
