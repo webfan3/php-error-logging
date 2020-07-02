@@ -1,4 +1,9 @@
 <?php
+
+use Psr\Container\ContainerInterface;
+use function DI\add;
+use function DI\decorate;
+
 use Whoops\Handler\PrettyPageHandler;
 use Whoops\Run;
 
