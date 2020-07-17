@@ -26,7 +26,7 @@
   "suggest" : {
        "frdl/install-setup-wizard" : "Installer/Setup-Wizard to create your Frdlweb-Workspace (Development-Server).",
        "frdl/project" : "Kickstarter boilerplate to be used by `composer create-project` command. Demo/Test Application."	  
-  }
+  },
 	
   "extra": {
     "config-plugin-output-dir": "config/",
