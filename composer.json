@@ -12,7 +12,8 @@
   "require" : {
 	    "php": ">=5.3.6",	    
 	    "frdl/frdlweb-composer-installers" : "*",
-	    "psr/log" : "~1.1.2",
+	    "psr/log" : "*",
+	    "wshafer/psr11-monolog" : "3.0.0",
 	    "filp/whoops" : "~2.7.3",
 	    "franzl/whoops-middleware" : "1.2.0",
 	    "frdl/webfan" : "*"
@@ -23,7 +24,7 @@
          }
   },
   "suggest" : {
-       "frdl/shutdown-helper" : "Reverse order register_shutdown manager.",
-       "webfan3/hps" : "Provides filesystem helpers"	  
+       "frdl/install-setup-wizard" : "Installer/Setup-Wizard to create your Frdlweb-Workspace (Development-Server).",
+       "frdl/project" : "Kickstarter boilerplate to be used by `composer create-project` command. Demo/Test Application."	  
   }
 }
