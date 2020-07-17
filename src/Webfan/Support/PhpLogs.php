@@ -72,8 +72,13 @@ class PhpLogs implements LoggerInterface, LoggingHandlerInterface
 
     return substr( (string)$size, 0, $endIndex).' '.$units[$i];
  }
-	
- public function pune(){
+ public function prune(){
+	$this
+		->_prune();
+	 
+	 return $this;	
+ }	
+ protected function _prune(){
 	$this
 		->puneFile($this->config['logs.dir'].$this->config['logs.file.errors'],$this->config['logs.prune_size.size'],$this->config['logs.prune_size.trigger'])
 		->puneFile($this->config['logs.dir'].$this->config['logs.file.memory'],$this->config['logs.prune_size.size'],$this->config['logs.prune_size.trigger'])
