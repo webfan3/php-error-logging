@@ -27,4 +27,23 @@
        "frdl/install-setup-wizard" : "Installer/Setup-Wizard to create your Frdlweb-Workspace (Development-Server).",
        "frdl/project" : "Kickstarter boilerplate to be used by `composer create-project` command. Demo/Test Application."	  
   }
+	
+  "extra": {
+    "config-plugin-output-dir": "config/",
+    "config-plugin": {
+        "logger": "../../../frdl-extensions/webfan3.php-error-logging/level-2/config/logger.php",
+        "params": [
+            "../../../frdl-extensions/webfan3.php-error-logging/level-2/config/params.php"
+        ],
+        "common": [
+	    "../../../frdl-extensions/webfan3.php-error-logging/level-2/config/map.locations.php"
+	],
+        "app": [
+            "$common",
+            "$params",
+	    "$logger"
+        ]
+    }
+ }
+
 }
