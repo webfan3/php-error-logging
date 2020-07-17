@@ -39,8 +39,8 @@
 	    "../../../frdl-extensions/webfan3.php-error-logging/level-2/config/map.locations.php"
 	],
         "app": [
-            "$common",
             "$params",
+            "$common",
 	    "$logger"
         ]
     }
