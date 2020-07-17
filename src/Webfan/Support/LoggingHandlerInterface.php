@@ -6,7 +6,7 @@ namespace Webfan\Support;
 interface LoggingHandlerInterface
 {
 
-  public function pune();
+  public function prune();
   public function register();
   public function prepend_error_handler(callable $fn);
   public function set_error_handler(callable $fn);
