@@ -31,8 +31,8 @@ class PhpLogs implements LoggerInterface, LoggingHandlerInterface
 	  }
 	  $this->config = array_merge(array_merge($this->config, [
 		         'logs.debug' => false, 
-		         'logs.dir' => ((class_exists(\webfan\hps\patch\Fs::class)) 
-								? \webfan\hps\patch\Fs::getRootDir()
+		         'logs.dir' => ((!empty(getenv('HOME'))) 
+								? getenv('HOME')
 								: getcwd())
 		                       .\DIRECTORY_SEPARATOR.'logs'.\DIRECTORY_SEPARATOR.'frdl'.\DIRECTORY_SEPARATOR,
 		         'logs.prune_size.trigger' => 999999,
@@ -73,11 +73,17 @@ class PhpLogs implements LoggerInterface, LoggingHandlerInterface
     return substr( (string)$size, 0, $endIndex).' '.$units[$i];
  }
  public function prune(){
-	$this
+	return $this
 		->_prune();
-	 
-	 return $this;	
  }	
+	
+ public function pune(){
+	error_log('Deprecated method `'.__METHOD__.'` use '.__CLASS__.'->prune() instead!'); 
+	return $this
+		->prune();
+ }	
+	
+	
  protected function _prune(){
 	$this
 		->puneFile($this->config['logs.dir'].$this->config['logs.file.errors'],$this->config['logs.prune_size.size'],$this->config['logs.prune_size.trigger'])
@@ -240,7 +246,7 @@ class PhpLogs implements LoggerInterface, LoggingHandlerInterface
     $this->memory_usage(); 
 	$this->checkLastError();
 	 if(true===$this->config['logs.autoprune']){	
-		 $this->pune(); 
+		 $this->prune(); 
 	 }
  }	
 	
