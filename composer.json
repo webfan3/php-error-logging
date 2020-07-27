@@ -16,7 +16,7 @@
 	    "wshafer/psr11-monolog" : "3.0.0",
 	    "filp/whoops" : "~2.7.3",
 	    "franzl/whoops-middleware" : "1.2.0",
-	    "markrogoyski/simplelog-php": "0.*",
+	    "markrogoyski/simplelog-php": "0.4.0",
 	    "frdl/webfan" : "*"
   },	  
   "autoload": {
